@@ -1,0 +1,12 @@
+<?php
+class Sample_model extends CI_Model{
+	
+		public function __contruct(){
+					$this->load->database();
+			}	
+			
+			public function get_list(){
+						$query = $this->db->query("names_tbl");				
+						return $query -> result_array();
+				}
+	}

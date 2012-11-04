@@ -50,7 +50,7 @@ class Welcome extends CI_Controller {
 		
 	public function index()
 	{
-		$data["names"] = $this->Sample_model->get_list();
+		$data["names"] = $this->Sample_model->get_list();	
 		
 		$this->load->view('welcome_message',$data);
 		

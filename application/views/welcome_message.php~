@@ -115,7 +115,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <?php foreach($names as $name): ?>
 <li><?php echo $name["name"];?></li>
 <?php endforeach;?>
-</ul>
 
 
 </body>
