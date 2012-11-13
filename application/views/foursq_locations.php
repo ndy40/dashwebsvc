@@ -4,11 +4,24 @@
  * and open the template in the editor.
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
-?>
-<html>
-    <head><title>Sample foursquare output</title></head>
-    <body>
-        <?php var_dump($result); ?>
 
-    </body>
-</html>
+$venueResponse = array();
+foreach($result->response->groups as $key){
+    foreach($key->items as $location){
+        
+         $venue = array(
+            "id" => $location->venue->id,
+            "name" => $location->venue->name,
+            "address"=>$location->venue->location->address,
+            "lat"=> $location->venue->location->lat,
+            "lng"=>$location->venue->location->lng,
+            "distance"=> $location->venue->location->distance,
+            "nbrCheckins"=>$location->venue->stats->checkinsCount           
+        );
+        $venueResponse[] = $venue;
+    }
+}
+
+echo json_encode($venueResponse);
+
+?>

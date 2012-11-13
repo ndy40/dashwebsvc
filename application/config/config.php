@@ -39,7 +39,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= '';
+$config['base_url']	= "";
 
 /*
 |--------------------------------------------------------------------------
@@ -82,7 +82,7 @@ $config['uri_protocol']	= 'AUTO';
 | http://codeigniter.com/user_guide/general/urls.html
 */
 
-$config['url_suffix'] = 'http://localhost/projects/';
+$config['url_suffix'] = '';
 
 /*
 |--------------------------------------------------------------------------

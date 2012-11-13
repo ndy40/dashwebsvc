@@ -40,15 +40,17 @@ class FourSquare {
                     $this->url .= "&client_id=" . $this->client_id;
                 if (!in_array("client_secret", $params))
                     $this->url .= "&client_secret=" . $this->client_secrete;
-                $this->url .= "v=20121105&radius=300";
+                $this->url .= "&v=20121105&radius=300";
             }
+            
+            
             $this->curl_instance = curl_init($this->url);
             curl_setopt($this->curl_instance, CURLOPT_HEADER, (int) 0);
             curl_setopt($this->curl_instance, CURLOPT_HTTPGET, TRUE);
             curl_setopt($this->curl_instance, CURLOPT_RETURNTRANSFER, true);
 
             $result = curl_exec($this->curl_instance);
-            return json_decode($result,TRUE);
+            return json_decode($result);
         } 
         catch (Exception $ex) {
             die($ex);
