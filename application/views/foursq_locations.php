@@ -22,6 +22,6 @@ foreach($result->response->groups as $key){
     }
 }
 
-echo json_encode($venueResponse);
+echo json_encode(array("venues"=>$venueResponse));
 
 ?>
