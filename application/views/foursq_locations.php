@@ -13,7 +13,7 @@ foreach($result->response->groups as $key){
          $venue = array(
             "id" => $location->venue->id,
             "name" => $location->venue->name,
-            "address"=>$location->venue->location->address,
+            "address"=> (property_exists($location->venue->location,"address")?$location->venue->location->address:""),
             "lat"=> $location->venue->location->lat,
             "lng"=>$location->venue->location->lng,
             "distance"=> $location->venue->location->distance,

@@ -50,6 +50,7 @@ class FourSquare {
             curl_setopt($this->curl_instance, CURLOPT_RETURNTRANSFER, true);
 
             $result = curl_exec($this->curl_instance);
+            
             return json_decode($result);
         } 
         catch (Exception $ex) {
