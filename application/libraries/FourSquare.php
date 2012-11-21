@@ -16,7 +16,7 @@ class FourSquare {
     private $client_id = "FCSXEB2YT1JSURENFDAVHEDRSM4KEFLBWPIZUQVHNRCDAEWP";
     private $client_secrete = "VATJ3UKZX3NPZJHL2RYYTN1QHFLXFH45MRFMIK2A5O52LGV3";
     public $url;
-    public $limit = 10;
+    public $limit = 20;
     private $curl_instance;
 
     

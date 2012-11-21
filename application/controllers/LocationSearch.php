@@ -12,24 +12,25 @@
  */
 class LocationSearch extends CI_Controller {
     //put your code here
+    private $GOOGLE_API_KEY = "AIzaSyAMJsi6uzlG_l26K50mweEajBxUDgD9Pr0";
     
-    public  function index($lat,$long,$limit=10){
-        $url = "https://api.foursquare.com/v2/venues/explore";
-        $this->load->library("FourSquare");
-        
-        $this->foursquare->url = $url;
+    public  function index($lat,$long,$radius = 300){
+        $this->load->library("GooglePlaces");
+               
         $params = array(
-                "ll"=>$lat.",".$long,
-                "limit" => $limit
-                //"access_token" => "UGNFSU3SJYW5SNBQ2LLJIP3PUX3LS0IFNXN1F1II5VKC2NWI"
+                "location"=>$lat.",".$long,
+                "sensor" => "false",
+                "key" => $this->GOOGLE_API_KEY,
+                "radius" => $radius                
                 );
-        $this->foursquare->limit = $limit;
-        $data["result"] = $this->foursquare->venue_explore($params); 
         
+        $data["result"] = $this->googleplaces->nearby_places($params); 
         $this->load->view("foursq_locations",$data);
         
         
     }
+    
+    
 }
 
 ?>

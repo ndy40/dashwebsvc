@@ -7,20 +7,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $this->output->set_header('Content-Type: application/json; charset=utf-8');
 
 $venueResponse = array();
-foreach($result->response->groups as $key){
-    foreach($key->items as $location){
-        
+foreach($result->results as $key){
+           
          $venue = array(
-            "id" => $location->venue->id,
-            "name" => $location->venue->name,
-            "address"=> (property_exists($location->venue->location,"address")?$location->venue->location->address:""),
-            "lat"=> $location->venue->location->lat,
-            "lng"=>$location->venue->location->lng,
-            "distance"=> $location->venue->location->distance,
-            "nbrCheckins"=>$location->venue->stats->checkinsCount           
+            "id" => $key->id,
+            "name" => $key->name,
+            "address"=> (property_exists($key,"formatted_address")?$key->formatted_address:$key->vicinity),
+            "lat"=> $key->geometry->location->lat,
+            "lng"=>$key->geometry->location->lng,  
+             "type"=> $key->types
         );
         $venueResponse[] = $venue;
-    }
 }
 
 echo json_encode(array('venues'=>$venueResponse));
