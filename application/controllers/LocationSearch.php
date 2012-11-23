@@ -30,19 +30,22 @@ class LocationSearch extends CI_Controller {
         
     }
     
-    private function add_location($locationid,$location_name,$locaiton_address){
+    private function add_location($locationid,$location_name,$locaiton_address,$lat,$lng){
+        
         try{
             if(!empty($locationid) || !empty($location_name) || !empty($locaiton_address)){
-                $this->load-database();
-                $sql = "SELECT count(*) rowexist,locationid from location where API_ID='{$locationid}'";
+                $this->load->database();
+                $sql = "SELECT count(*) rowexist,locationid,API_ID from locations where API_ID='{$locationid}'";
                 $result = $this->db->query($sql);
-                $row = $result->rows();
+                $row = $result->row();
                 if($row->rowexist > 0)
-                    return $row->locationid;
+                    return $row->API_ID;
                 else{
-                    $param = array("locationid"=> $locationid,"locationName"=>$location_name,"locationAddress"=>$locaiton_address);
+                    $param = array("API_ID"=> $locationid,"locationName"=>$location_name,
+                        "locationAddress"=>$locaiton_address,
+                        "LocationLat"=>$lat,"LocationLng"=>$lng);
                     $row = $this->db->insert("locations",$param);
-                    if($row->affected_rows()>0)
+                    if($this->db->affected_rows()>0)
                         return $locationid;
                                       
                 }                
@@ -58,27 +61,30 @@ class LocationSearch extends CI_Controller {
      * Method to accept checkin data.
      */
     public function checkin(){
+        $this->load->database();
         $error = "";
         $resp = array();
         $userid = $this->input->post("user_id");
-        $locationid = $this->input->post("location_id");
+            $locationid = $this->input->post("location_id");
         $locationName = $this->input->post("location_name");
         $locationAddress = $this->input->post("location_address");
+        $locationLat = $this->input->post("location_lat");
+        $locationLng = $this->input->post("location_lng");
         try{
             if($userid || $locationid || $locationName ){
                 $get_user_sql = $this->db->get_where("users",array("user_id"=> $userid)) ;
                 $rows = $get_user_sql->row();
                 if($rows){
-                    $userid = $row->user_id;
-                    $location_id = $this->add_location($locationid, $locationName, $locationAddress);
+                    $userid = $rows->user_id;
+                    $location_id = $this->add_location($locationid, $locationName, $locationAddress,$locationLat,$locationLng);
                     //handle updating number of checkins. Get current count and update by 1
                     $checkin_count = $this->db->get_where("locations",array("API_ID"=>$location_id))->row();
-                    $nbr_checkins = $checkin_count->locationcheckins + 1;
+                    $nbr_checkins = $checkin_count->LocationCheckins + 1;
                     $this->db->update("locations",array("locationcheckins"=>$nbr_checkins),array("API_ID"=> $location_id));
                     //set response status if successful
                     $resp["status"] = "true";
                     $resp["checkin"] = array("userid" => $userid, 
-                        "location"=>array("locationid"=>$location_id,"location_name"=>$locationName,"locationAddress"=>$locationAddress));                    
+                        "location"=>array("locationid"=>$location_id,"location_name"=>$locationName,"location_address"=>$locationAddress,"location_checkins"=>$nbr_checkins,"location_lat"=>$locationLat,"location_lng"=>$locationLng));                    
                     
                 }else{
                     //handle situation where a user doesn't not exist
@@ -106,12 +112,18 @@ class LocationSearch extends CI_Controller {
         $this->db->select("*");
         $this->db->from("locations");
         $this->db->join("locationcheckin","locations.locationid=locationcheckin.locationid","left");
-        $this->db->join("locationreview","locations.locationid=locationreview.locationid","left");
         $this->db->where("API_ID",$locationid);
         $result = $this->db->get();
         
+        $this->db->select("locationreview.*");
+        $this->db->from("locationreview");
+        $this->db->join("locations","locations.locationid=locationreview.locationid");
+        $this->db->where("locations.API_ID",$locationid);
+        $reviews = $this->db->get();
+        
         $resp["status"] = "true";
         $resp["location"] = $result->result_array();
+        $resp["reviews"] = $reviews->result_array();
         $data["location"] = $resp;
         $this->load->view("location",$data);        
     }
