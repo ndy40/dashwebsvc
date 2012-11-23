@@ -30,6 +30,91 @@ class LocationSearch extends CI_Controller {
         
     }
     
+    private function add_location($locationid,$location_name,$locaiton_address){
+        try{
+            if(!empty($locationid) || !empty($location_name) || !empty($locaiton_address)){
+                $this->load-database();
+                $sql = "SELECT count(*) rowexist,locationid from location where API_ID='{$locationid}'";
+                $result = $this->db->query($sql);
+                $row = $result->rows();
+                if($row->rowexist > 0)
+                    return $row->locationid;
+                else{
+                    $param = array("locationid"=> $locationid,"locationName"=>$location_name,"locationAddress"=>$locaiton_address);
+                    $row = $this->db->insert("locations",$param);
+                    if($row->affected_rows()>0)
+                        return $locationid;
+                                      
+                }                
+            }
+            
+        }catch(Exception $ex){
+            die($ex);
+        }
+        return false;
+    }
+    
+    /*
+     * Method to accept checkin data.
+     */
+    public function checkin(){
+        $error = "";
+        $resp = array();
+        $userid = $this->input->post("user_id");
+        $locationid = $this->input->post("location_id");
+        $locationName = $this->input->post("location_name");
+        $locationAddress = $this->input->post("location_address");
+        try{
+            if($userid || $locationid || $locationName ){
+                $get_user_sql = $this->db->get_where("users",array("user_id"=> $userid)) ;
+                $rows = $get_user_sql->row();
+                if($rows){
+                    $userid = $row->user_id;
+                    $location_id = $this->add_location($locationid, $locationName, $locationAddress);
+                    //handle updating number of checkins. Get current count and update by 1
+                    $checkin_count = $this->db->get_where("locations",array("API_ID"=>$location_id))->row();
+                    $nbr_checkins = $checkin_count->locationcheckins + 1;
+                    $this->db->update("locations",array("locationcheckins"=>$nbr_checkins),array("API_ID"=> $location_id));
+                    //set response status if successful
+                    $resp["status"] = "true";
+                    $resp["checkin"] = array("userid" => $userid, 
+                        "location"=>array("locationid"=>$location_id,"location_name"=>$locationName,"locationAddress"=>$locationAddress));                    
+                    
+                }else{
+                    //handle situation where a user doesn't not exist
+                    $error = "User is not registered or does not exist";
+                    $resp["status"] = "NOT_USER";
+                    $resp["error"] = $error;
+                }
+            }else{
+                $error = "One or more required parameters missing";
+                $resp["status"] = "MISSING_PARAMETER";
+            }
+        }catch(Exception $ex){
+            $error = $ex->getMessage();
+            $resp["status"] = "EXCEPTION_ERROR";
+            $resp["error"] = $error;            
+        }
+        
+        $data["checkin"] = $resp;
+        $this->load->view("checkin",$data);
+    }
+    
+    public function fetch_location($locationid){
+        $this->load->database();
+        $resp = array();
+        $this->db->select("*");
+        $this->db->from("locations");
+        $this->db->join("locationcheckin","locations.locationid=locationcheckin.locationid","left");
+        $this->db->join("locationreview","locations.locationid=locationreview.locationid","left");
+        $this->db->where("API_ID",$locationid);
+        $result = $this->db->get();
+        
+        $resp["status"] = "true";
+        $resp["location"] = $result->result_array();
+        $data["location"] = $resp;
+        $this->load->view("location",$data);        
+    }
     
 }
 

@@ -15,7 +15,8 @@ foreach($result->results as $key){
             "address"=> (property_exists($key,"formatted_address")?$key->formatted_address:$key->vicinity),
             "lat"=> $key->geometry->location->lat,
             "lng"=>$key->geometry->location->lng,  
-             "type"=> $key->types
+             "type"=> $key->types,
+             
         );
         $venueResponse[] = $venue;
 }
