@@ -43,7 +43,7 @@ class LocationSearch extends CI_Controller {
                 else{
                     $param = array("API_ID"=> $locationid,"locationName"=>$location_name,
                         "locationAddress"=>$locaiton_address,
-                        "LocationLat"=>$lat,"LocationLng"=>$lng);
+                        "LocationLat"=>$lat,"LocationLong"=>$lng);
                     $row = $this->db->insert("locations",$param);
                     if($this->db->affected_rows()>0)
                         return $locationid;
