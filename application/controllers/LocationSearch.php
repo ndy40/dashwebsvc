@@ -80,7 +80,7 @@ class LocationSearch extends CI_Controller {
                     $checkin_count = $this->db->get_where("locations", array("API_ID" => $location_id));
                     $resp["status"] = "true";
                     $resp["checkin"]["userid"] = $userid;
-                    if ($checkin_count != null) {
+                    if ($checkin_count->num_rows() > 0) {
                         $checkin_count = $checkin_count->row();
                         $nbr_checkins = $checkin_count->LocationCheckins + 1;
                         $this->db->update("locations", array("locationcheckins" => $nbr_checkins), array("locationid" => $location_id, "API_ID" => $checkin_count->API_ID, "LocationRatings" => $checkin_count->LocationRatings, "LocationUseRatings" => $checkin_count->LocationUseRatings));
