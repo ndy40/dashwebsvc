@@ -98,6 +98,28 @@ class UserAccount extends CI_Controller {
         
         
     }
+    
+    public function fetch_user($userid,$get_followers = false,$get_following = false){
+        $this->load->database();
+        $resp = array();
+        $this->db->select("*");
+        $this->db->from("users");
+        $this->db->where("user_id",$userid);
+        $user = $this->db->get()->row();        
+        $resp["user"] = array("userid"=>$user->user_id, "username"=>$user->UserName,"firstname"=>$user->Firstname,"lastname"=>$user->Lastname);
+        
+        if($user != null){
+            if($get_followers){
+                $this->db->select("users.*");
+                $this->db->from("users");
+                $this->db->join("Friendlist","Friendlist.following = users.user_id");
+                $this->db->where("Friendlist.userid",$user->user_id);
+                
+            }
+        }
+        
+        
+    }
 }
 
 ?>

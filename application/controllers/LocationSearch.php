@@ -102,7 +102,7 @@ class LocationSearch extends CI_Controller {
             $resp["error"] = $error;            
         }
         
-        $data["checkin"] = $resp;
+        $data["checkin"] = json_encode($resp);
         $this->load->view("checkin",$data);
     }
     
