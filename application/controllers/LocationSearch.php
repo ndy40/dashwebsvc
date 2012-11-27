@@ -39,7 +39,7 @@ class LocationSearch extends CI_Controller {
                 $result = $this->db->query($sql);
                 $row = $result->row();
                 if($row->rowexist > 0)
-                    return $row->API_ID;
+                    return $row->locationid;
                 else{
                     $param = array("API_ID"=> $locationid,"locationName"=>$location_name,
                         "locationAddress"=>$locaiton_address,
@@ -78,13 +78,13 @@ class LocationSearch extends CI_Controller {
                     $userid = $rows->user_id;
                     $location_id = $this->add_location($locationid, $locationName, $locationAddress,$locationLat,$locationLng);
                     //handle updating number of checkins. Get current count and update by 1
-                    $checkin_count = $this->db->get_where("locations",array("API_ID"=>$location_id))->row();
+                    $checkin_count = $this->db->get_where("locations",array("locationid"=>$location_id))->row();
                     $nbr_checkins = $checkin_count->LocationCheckins + 1;
-                    $this->db->update("locations",array("locationcheckins"=>$nbr_checkins),array("API_ID"=> $location_id));
+                    $this->db->update("locations",array("locationcheckins"=>$nbr_checkins),array("locationid"=> $location_id,"API_ID"=>$checkin_count->API_ID,"LocationRatings"=>$checkin_count->LocationRatings,"LocationUseRatings"=>$checkin_count->LocationUseRatings));
                     //set response status if successful
                     $resp["status"] = "true";
                     $resp["checkin"] = array("userid" => $userid, 
-                        "location"=>array("locationid"=>$location_id,"location_name"=>$locationName,"location_address"=>$locationAddress,"location_checkins"=>$nbr_checkins,"location_lat"=>$locationLat,"location_lng"=>$locationLng));                    
+                        "location"=>$checkin_count);                    
                     
                 }else{
                     //handle situation where a user doesn't not exist
@@ -111,9 +111,15 @@ class LocationSearch extends CI_Controller {
         $resp = array();
         $this->db->select("*");
         $this->db->from("locations");
-        $this->db->join("locationcheckin","locations.locationid=locationcheckin.locationid","left");
+        //$this->db->join("locationcheckin","locations.locationid=locationcheckin.locationid","left");
         $this->db->where("API_ID",$locationid);
         $result = $this->db->get();
+        
+        $this->db->select("locationcheckin.*");
+        $this->db->from("locationcheckin");
+        $this->db->join("locations","locationcheckin.locationid=locations.locationid","right");
+        $this->db->where("API_ID",$locationid);
+        $checkin = $this->db->get();
         
         $this->db->select("locationreview.*");
         $this->db->from("locationreview");
@@ -122,12 +128,65 @@ class LocationSearch extends CI_Controller {
         $reviews = $this->db->get();
         
         $resp["status"] = "true";
-        $resp["location"] = $result->result_array();
+        $resp["location"] = $result->row();
+        $resp["checkin"] = $checkin->result_array();
         $resp["reviews"] = $reviews->result_array();
         $data["location"] = $resp;
         $this->load->view("location",$data);        
     }
     
+    public function add_review(){
+        $userid = $this->input->post("userid");
+        $locationid = $this->input->post("locationid");
+        $reviewText = $this->input->post("reviewText") ;
+        $floatRating = $this->input->post("fltRating"); 
+        
+        $response = array();
+        
+        if($userid || $locationid && ($reviewText || $floatRating ) ){
+            
+            $insertavg = $this->insert_review($locationid, $userid, $reviewText, $floatRating);
+            
+            if($insertavg != null || $insertavg > -1){
+                $response["success"] = "true";
+                $response["result"] = (int)$insertavg;                
+            }
+                        
+        }else{
+            $response["success"] = "false";
+            
+        }
+        
+        $data["review"]  = json_encode($response);
+        $this->load->view("add_review",$data);
+        
+    }
+    
+    private function insert_review($locationid, $userid,$review,$rating){
+        $this->load->database();
+        $resp = array();
+        $param = array("LocationId"=>$locationid,"UserId"=>$userid,"DateTime"=> time(),"ReviewText"=>$review,"ReviewRating"=>$rating);
+        $this->db->insert("locationreview",$param);
+        if($this->db->affected_rows() > 0){
+           $this->db->select("AVG(ReviewRating) as Average");
+           $this->db->from("locationreview");
+           $this->db->where(array("LocationId"=>$locationid,"ReviewRating >"=> 0.0));
+           $result = $this->db->get()->row();
+           
+           if($result->Average != null){
+               $param = array("LocationRatings"=>$result->Average,"LocationUseRatings"=>1);
+               $this->db->where("locationid",$locationid);
+               $this->db->update("locations",$param);  
+              //handle response
+               return $result->Average;
+           }
+                      
+           return -1;
+        }
+        
+        
+        
+    }
 }
 
 ?>
