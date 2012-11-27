@@ -78,7 +78,7 @@ class LocationSearch extends CI_Controller {
                     $userid = $rows->user_id;
                     $location_id = $this->add_location($locationid, $locationName, $locationAddress,$locationLat,$locationLng);
                     //handle updating number of checkins. Get current count and update by 1
-                    $checkin_count = $this->db->get_where("locations",array("locationid"=>$location_id))->row();
+                    $checkin_count = $this->db->get_where("locations",array("API_ID"=>$location_id))->row();
                     $nbr_checkins = $checkin_count->LocationCheckins + 1;
                     $this->db->update("locations",array("locationcheckins"=>$nbr_checkins),array("locationid"=> $location_id,"API_ID"=>$checkin_count->API_ID,"LocationRatings"=>$checkin_count->LocationRatings,"LocationUseRatings"=>$checkin_count->LocationUseRatings));
                     //set response status if successful
@@ -135,7 +135,7 @@ class LocationSearch extends CI_Controller {
         $this->load->view("location",$data);        
     }
     
-    public function add_review(){
+    public function add_review()    {
         $userid = $this->input->post("userid");
         $locationid = $this->input->post("locationid");
         $reviewText = $this->input->post("reviewText") ;
