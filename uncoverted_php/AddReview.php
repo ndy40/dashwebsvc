@@ -6,7 +6,7 @@ function addReview()
 {
 	global $intLocationId, $intUserId, $strReview, $fltRating;
 	
-	if($intLocationId == "" || $intUserId == "")
+	if($intLocationId == "" || $intUserId == "")    
 	{
 		return 0;
 	}

@@ -70,6 +70,34 @@ class UserAccount extends CI_Controller {
     public function update_user(){
         
     }
+    
+    public function follow_user(){
+        $this->load->database();
+        $userid = $this->input->post("userid");
+        $followId= $this->input->post("followid");
+        
+        $resp = array();
+        if($userid && $followId && ($userid != $followId) ){
+            $param = array("userid"=> (int)$userid,"following"=> (int)$followId);
+            $this->db->insert("Friendlist",$param);
+            if($this->db->affected_rows() > 0){
+                $resp["status"] = "true";                
+            }else{
+                $resp["status"] = "false";                
+                $resp["error"] = "An error occured.";
+            }
+            
+        }else{
+            $resp["status"] = "false";
+            $resp["error"] = "Missing or inappropriate parameter passed";
+            
+        }
+        
+        $data["follow"] = json_encode($resp);
+        $this->load->view("follow_user",$data);
+        
+        
+    }
 }
 
 ?>
