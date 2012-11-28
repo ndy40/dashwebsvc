@@ -81,10 +81,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => 'mysql',
-	'database' => 'dash',
+	'hostname' => 'mysql.serversfree.com',
+	'username' => 'u618791197_dash',
+	'password' => 'group2project',
+	'database' => 'u618791197_dash',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => TRUE,

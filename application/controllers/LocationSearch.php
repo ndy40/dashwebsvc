@@ -38,7 +38,7 @@ class LocationSearch extends CI_Controller {
                 $result = $this->db->query($sql);
                 $row = $result->row();
                 if ($row->rowexist > 0)
-                    return $row->locationid;
+                    return $row->API_ID;
                 else {
                     $param = array("API_ID" => $locationid, "locationName" => $location_name,
                         "locationAddress" => $locaiton_address,
@@ -48,6 +48,30 @@ class LocationSearch extends CI_Controller {
                         return $locationid;
                 }
             }
+        } catch (Exception $ex) {
+            die($ex);
+        }
+        return false;
+    }
+
+    private function add_checkin($location_id, $user_id ) {
+
+        try {
+            if (!empty($location_id) || !empty($user_id) ) {
+                $this->load->database();
+
+		$this->load->helper('date');
+                $time = time();
+		
+		$date = new DateTime();
+
+//		$param = array("LocationId" => $location_id, "UserId" => $user_id, "DateTime" => $date->getTimestamp() );
+  		$param = array("LocationId" => $location_id, "UserId" => $user_id, "DateTime" => $time );
+                    $row = $this->db->insert("locationcheckin", $param);
+                    if ($this->db->affected_rows() > 0)
+                        return true;
+                }
+            
         } catch (Exception $ex) {
             die($ex);
         }
@@ -78,12 +102,13 @@ class LocationSearch extends CI_Controller {
                     $location_id = $this->add_location($locationid, $locationName, $locationAddress, $locationLat, $locationLng);
                     //handle updating number of checkins. Get current count and update by 1
                     $checkin_count = $this->db->get_where("locations", array("API_ID" => $location_id));
+                    $checkin_id = $this->add_checkin( 4, $userid);
                     $resp["status"] = "true";
                     $resp["checkin"]["userid"] = $userid;
                     if ($checkin_count->num_rows() > 0) {
                         $checkin_count = $checkin_count->row();
                         $nbr_checkins = $checkin_count->LocationCheckins + 1;
-                        $this->db->update("locations", array("locationcheckins" => $nbr_checkins), array("locationid" => $location_id, "API_ID" => $checkin_count->API_ID, "LocationRatings" => $checkin_count->LocationRatings, "LocationUseRatings" => $checkin_count->LocationUseRatings));
+                        $this->db->update("locations", array("locationcheckins" => $nbr_checkins), array("API_ID" => $checkin_count->API_ID, "LocationRatings" => $checkin_count->LocationRatings, "LocationUseRatings" => $checkin_count->LocationUseRatings));
                         //set response status if successful
                         $resp["status"] = "true";
                         $resp["checkin"]["location"] = $checkin_count;
