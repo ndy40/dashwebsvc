@@ -74,10 +74,25 @@ class UserAccount extends CI_Controller {
     public function follow_user(){
         $this->load->database();
         $userid = $this->input->post("userid");
-        $followId= $this->input->post("followid");
-        
+        $followId= $this->input->post("followid");        
         $resp = array();
-        if($userid && $followId && ($userid != $followId) ){
+        if($userid && $followId && ($userid != $followId) ){          
+            
+            
+            //check if person is already following
+            $this->db->select("Count(*)");
+            $this->db->from("user_follow");
+            $this->db->where ("UserID",$userid);
+            $this->db->where("FollowedUserID",$followId);
+            $result = $this->db->get()->num_rows();
+            
+            if($result > 0){
+                $resp["status"] = "true";
+                $resp["error"] = "User is already followed ";
+                return $resp;
+            }
+            
+            
             $param = array("userid"=> (int)$userid,"following"=> (int)$followId);
             $this->db->insert("Friendlist",$param);
             if($this->db->affected_rows() > 0){
