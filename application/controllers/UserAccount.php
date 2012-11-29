@@ -125,7 +125,7 @@ class UserAccount extends CI_Controller {
         $resp["status"] = "true";
         $resp["user"] = array("userid"=>$user->user_id, "username"=>$user->UserName,"firstname"=>$user->Firstname,"lastname"=>$user->Surname);
         }else{
-            $resp["status"] = false;            
+            $resp["status"] = "false";            
         }
         $data["user"] = json_encode($resp);
         $this->load->view("fetch_user",$data);
