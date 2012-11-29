@@ -99,24 +99,60 @@ class UserAccount extends CI_Controller {
         
     }
     
-    public function fetch_user($userid,$get_followers = false,$get_following = false){
+    public function fetch_user($userid){
         $this->load->database();
         $resp = array();
         $this->db->select("*");
         $this->db->from("users");
         $this->db->where("user_id",$userid);
         $user = $this->db->get()->row();        
-        $resp["user"] = array("userid"=>$user->user_id, "username"=>$user->UserName,"firstname"=>$user->Firstname,"lastname"=>$user->Lastname);
-        
-        if($user != null){
-            if($get_followers){
-                $this->db->select("users.*");
-                $this->db->from("users");
-                $this->db->join("Friendlist","Friendlist.following = users.user_id");
-                $this->db->where("Friendlist.userid",$user->user_id);
+        $resp["user"] = array("userid"=>$user->user_id, "username"=>$user->UserName,"firstname"=>$user->Firstname,"lastname"=>$user->Surname);
                 
-            }
+        $data["user"] = json_encode($resp);
+        $this->load->view("fetch_user",$data);
+        
+    }
+    
+    public function  fetch_followers($userid){
+        $this->load->database();
+        $resp = array();
+        if($userid){
+        $this->db->select("users.user_id,users.Firstname,users.Surname");
+        $this->db->from("user_follows");
+        $this->db->join("users","users.user_id=user_follows.FollowedUserId");
+        $this->db->where("user_follows.UserID",$userid);
+        $result = $this->db->get()->result();
+        $resp["success"] = "true";
+        $resp["followers"] = $result;        
+        }else{
+            $resp["success"] = "false";
+            $resp["error"] = "missing parameter";
         }
+        
+        $data["followers"] = json_encode($resp);
+        $this->load->view("fetch_followers",$data);
+        
+        
+    }
+    
+    public function  fetch_following($userid){
+        $this->load->database();
+        $resp = array();
+        if($userid){
+        $this->db->select("users.user_id,users.Firstname,users.Surname,user_follows.DateTime");
+        $this->db->from("user_follows");
+        $this->db->join("users","users.user_id=user_follows.FollowedUserId");
+        $this->db->where("user_follows.FollowedUserID",$userid);
+        $result = $this->db->get()->result();
+        $resp["success"] = "true";
+        $resp["followers"] = $result;        
+        }else{
+            $resp["success"] = "false";
+            $resp["error"] = "missing parameter";
+        }
+        
+        $data["following"] = json_encode($resp);
+        $this->load->view("fetch_following",$data);
         
         
     }

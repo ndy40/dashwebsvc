@@ -11,8 +11,7 @@
  * @author ndy40
  */
 class LocationSearch extends CI_Controller {
-
-    //put your code here
+ //put your code here
     private $GOOGLE_API_KEY = "AIzaSyAMJsi6uzlG_l26K50mweEajBxUDgD9Pr0";
 
     public function index($lat, $long, $radius = 300) {
@@ -38,7 +37,7 @@ class LocationSearch extends CI_Controller {
                 $result = $this->db->query($sql);
                 $row = $result->row();
                 if ($row->rowexist > 0)
-                    return $row->locationid;
+                    return $row->API_ID;
                 else {
                     $param = array("API_ID" => $locationid, "locationName" => $location_name,
                         "locationAddress" => $locaiton_address,
@@ -48,6 +47,30 @@ class LocationSearch extends CI_Controller {
                         return $locationid;
                 }
             }
+        } catch (Exception $ex) {
+            die($ex);
+        }
+        return false;
+    }
+
+    private function add_checkin($location_id, $user_id ) {
+
+        try {
+            if (!empty($location_id) || !empty($user_id) ) {
+                $this->load->database();
+
+		$this->load->helper('date');
+                $time = time();
+		
+		$date = new DateTime();
+
+//		$param = array("LocationId" => $location_id, "UserId" => $user_id, "DateTime" => $date->getTimestamp() );
+  		$param = array("LocationId" => $location_id, "UserId" => $user_id, "DateTime" => $time );
+                    $row = $this->db->insert("locationcheckin", $param);
+                    if ($this->db->affected_rows() > 0)
+                        return true;
+                }
+            
         } catch (Exception $ex) {
             die($ex);
         }
@@ -78,12 +101,13 @@ class LocationSearch extends CI_Controller {
                     $location_id = $this->add_location($locationid, $locationName, $locationAddress, $locationLat, $locationLng);
                     //handle updating number of checkins. Get current count and update by 1
                     $checkin_count = $this->db->get_where("locations", array("API_ID" => $location_id));
+                    $checkin_id = $this->add_checkin( 4, $userid);
                     $resp["status"] = "true";
                     $resp["checkin"]["userid"] = $userid;
                     if ($checkin_count->num_rows() > 0) {
                         $checkin_count = $checkin_count->row();
                         $nbr_checkins = $checkin_count->LocationCheckins + 1;
-                        $this->db->update("locations", array("locationcheckins" => $nbr_checkins), array("locationid" => $location_id, "API_ID" => $checkin_count->API_ID, "LocationRatings" => $checkin_count->LocationRatings, "LocationUseRatings" => $checkin_count->LocationUseRatings));
+                        $this->db->update("locations", array("locationcheckins" => $nbr_checkins), array("API_ID" => $checkin_count->API_ID, "LocationRatings" => $checkin_count->LocationRatings, "LocationUseRatings" => $checkin_count->LocationUseRatings));
                         //set response status if successful
                         $resp["status"] = "true";
                         $resp["checkin"]["location"] = $checkin_count;
@@ -185,6 +209,48 @@ class LocationSearch extends CI_Controller {
             return -1;
         }
     }
+    
+    public function fetch_checkins($userid){
+        $resp = array();
+        $this->load->database();
+        if($userid){
+        $this->db->select("checkInId,DateTime,locations.LocationName");
+        $this->db->from("locationcheckin");
+        $this->db->join("locations","locationcheckin.LocationId = locations.LocationId");
+        $this->db->where("UserId",$userid);        
+        $result = $this->db->get()->result();
+        
+        $resp["success"] = "true";
+        $resp["checkins"] = $result;
+            
+        }else{
+            $resp["success"] = "false";
+            $resp["error"] = "Missing parameter";
+        }
+        
+        $data["checkins"] = json_encode($resp);
+        $this->load->view("fetch_checkins",$data);
+    }
+    
+    public function fetch_reviews($userid){
+        $this->load->database();
+        $resp = array();
+        if($userid){
+            $this->db->select("locationreview.*,locations.LocationName");
+            $this->db->from("locationreview");
+            $this->db->join("locations","locations.LocationId = locationreview.locationId");
+            $this->db->where("UserId",$userid);
+            $result = $this->db->get()->result();
+            $resp["success"] = "true";
+            $resp["reviews"] = $result;            
+        }else{
+            $resp["success"] = "false";
+        }
+        
+        $data["reviews"] = json_encode($resp);
+        $this->load->view("fetch_reviews",$data);
+    }
+    
 
 }
 
