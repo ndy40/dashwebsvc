@@ -93,7 +93,7 @@ class UserAccount extends CI_Controller {
 			
 			$this->load->helper('date');
 			$time = time();
-            $param = array("userid"=> (int)$userid,"following"=> (int)$followId), "datetime" => (int)$time);
+            $param = array("userid"=> (int)$userid,"following"=> (int)$followId, "datetime" => (int)$time);
             $this->db->insert("user_follows",$param);
             if($this->db->affected_rows() > 0)
 			{
