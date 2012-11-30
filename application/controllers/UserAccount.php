@@ -72,47 +72,42 @@ class UserAccount extends CI_Controller {
     }
     
     public function follow_user(){
-		$this->load->database();
-		$userid = $this->input->post("userid");
-		$followId= $this->input->post("followid");        
-		$resp = array();
-		if($userid && $followId && ($userid != $followId) )
-		{          
-			//check if person is already following
-			$this->db->select("Count(*)");
-			$this->db->from("user_follows");
-			$this->db->where ("UserID",$userid);
-			$this->db->where("FollowedUserID",$followId);
-			$result = $this->db->get()->num_rows();
-			
-			if($result > 0)
-			{	
-					$resp["status"] = "true";
-					$resp["error"] = "User is already followed ";
-					return $resp;
-			}
+        $this->load->database();
+        $userid = $this->input->post("userid");
+        $followId= $this->input->post("followid");        
+        $resp = array();
+        if($userid && $followId && ($userid != $followId) ){          
+            //check if person is already following
+            $sql = "SELECT count(*) as usercount FROM user_follows WHERE UserId like '{$userid}' AND FollowedUserID like '{$followId}'";
+            $user_exist_rs = $this->db->query($sql);
+            $row = $user_exist_rs->row();
 
-			$this->load->helper('date');
-			$time = time();
-			$param = array("UserID"=> $userid, "FollowedUserID"=> $followId, "DateTime" => $time);
-			$this->db->insert("user_follows",$param);
-			if($this->db->affected_rows() > 0)
-			{
-					$resp["status"] = "true";                
-			}
-			else
-			{
-					$resp["status"] = "false";                
-					$resp["error"] = "An error occured.";
-			}            
-		} 
+            if($row->usercount > 0){
+                $resp["status"] = "false";
+                $resp["error"] = "User is already followed ";
+            }
+            else {
+			
+	$this->load->helper('date');
+	$time = time();
+            $param = array("UserId"=> (int)$userid,"FollowedUserID"=> (int)$followId, "datetime" => $time);
+            $this->db->insert("user_follows",$param);
+            if($this->db->affected_rows() > 0){
+                $resp["status"] = "true";                
+            }
+	    else{
+                $resp["status"] = "false";                
+                $resp["error"] = "An error occured.";
+            }     
+           }
+        } 
 		else
 		{
-			$resp["status"] = "false";
-			$resp["error"] = "Missing or inappropriate parameter passed";            
-		}        
-		$data["follow"] = json_encode($resp);
-		$this->load->view("follow_user",$data);
+            $resp["status"] = "false";
+            $resp["error"] = "Missing or inappropriate parameter passed";            
+        }        
+        $data["follow"] = json_encode($resp);
+        $this->load->view("follow_user",$data);
     }
     
     public function fetch_user($userid)
