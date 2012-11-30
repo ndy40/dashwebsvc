@@ -1,18 +1,4 @@
-[27-Nov-2012 19:01:08] PHP Parse error:  syntax error, unexpected T_STRING in /home/u618791197/public_html/dashwebsvc/index.php on line 208
-[27-Nov-2012 19:01:22] PHP Parse error:  syntax error, unexpected T_STRING in /home/u618791197/public_html/dashwebsvc/index.php on line 208
-[28-Nov-2012 13:36:20] PHP Parse error:  syntax error, unexpected '}', expecting T_CATCH in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 71
-[28-Nov-2012 13:40:36] PHP Parse error:  syntax error, unexpected '}', expecting T_CATCH in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 71
-[28-Nov-2012 13:43:08] PHP Parse error:  syntax error, unexpected '}', expecting T_CATCH in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 71
-[28-Nov-2012 13:45:09] PHP Parse error:  syntax error, unexpected '}', expecting T_CATCH in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 71
-[28-Nov-2012 13:48:05] PHP Parse error:  syntax error, unexpected '}', expecting T_CATCH in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 71
-[28-Nov-2012 13:50:54] PHP Parse error:  syntax error, unexpected '}', expecting T_CATCH in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 71
-[28-Nov-2012 13:51:03] PHP Parse error:  syntax error, unexpected '}', expecting T_CATCH in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 71
-[28-Nov-2012 13:51:16] PHP Parse error:  syntax error, unexpected '}', expecting T_CATCH in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 71
-[28-Nov-2012 13:53:39] PHP Parse error:  syntax error, unexpected '}', expecting T_CATCH in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 71
-[28-Nov-2012 13:55:12] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 81
-[28-Nov-2012 13:55:16] PHP Parse error:  syntax error, unexpected T_PUBLIC in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 81
-[28-Nov-2012 14:03:13] PHP Fatal error:  Call to undefined method DateTime::getTimestamp() in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 65
-[28-Nov-2012 14:12:59] PHP Fatal error:  Call to undefined method DateTime::getTimestamp() in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 65
-[28-Nov-2012 14:25:49] PHP Fatal error:  Call to undefined method DateTime::getTimestamp() in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 65
-[28-Nov-2012 14:27:07] PHP Fatal error:  Call to undefined method DateTime::getTimestamp() in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 65
-[28-Nov-2012 14:40:12] PHP Fatal error:  Call to undefined method DateTime::getTimestamp() in /home/u618791197/public_html/dashwebsvc/application/controllers/LocationSearch.php on line 65
+[30-Nov-2012 11:20:29 Europe/Berlin] PHP Fatal error:  Call to undefined function mysqli_init() in /home/dashhost/public_html/dashwebsvc/system/database/drivers/mysqli/mysqli_driver.php on line 94
+[30-Nov-2012 11:20:53 Europe/Berlin] PHP Fatal error:  Call to undefined function mysqli_init() in /home/dashhost/public_html/dashwebsvc/system/database/drivers/mysqli/mysqli_driver.php on line 94
+[30-Nov-2012 11:28:16 Europe/Berlin] PHP Parse error:  syntax error, unexpected ',' in /home/dashhost/public_html/dashwebsvc/application/controllers/UserAccount.php on line 96
+[30-Nov-2012 11:39:00 Europe/Berlin] PHP Fatal error:  Call to undefined function mysqli_init() in /home/dashhost/public_html/dashwebsvc/system/database/drivers/mysqli/mysqli_driver.php on line 94

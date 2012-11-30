@@ -11,8 +11,7 @@
  * @author ndy40
  */
 class LocationSearch extends CI_Controller {
-
-    //put your code here
+ //put your code here
     private $GOOGLE_API_KEY = "AIzaSyAMJsi6uzlG_l26K50mweEajBxUDgD9Pr0";
 
     public function index($lat, $long, $radius = 300) {
@@ -210,6 +209,48 @@ class LocationSearch extends CI_Controller {
             return -1;
         }
     }
+    
+    public function fetch_checkins($userid){
+        $resp = array();
+        $this->load->database();
+        if($userid){
+        $this->db->select("checkInId,DateTime,locations.LocationName");
+        $this->db->from("locationcheckin");
+        $this->db->join("locations","locationcheckin.LocationId = locations.LocationId");
+        $this->db->where("UserId",$userid);        
+        $result = $this->db->get()->result();
+        
+        $resp["success"] = "true";
+        $resp["checkins"] = $result;
+            
+        }else{
+            $resp["success"] = "false";
+            $resp["error"] = "Missing parameter";
+        }
+        
+        $data["checkins"] = json_encode($resp);
+        $this->load->view("fetch_checkins",$data);
+    }
+    
+    public function fetch_reviews($userid){
+        $this->load->database();
+        $resp = array();
+        if($userid){
+            $this->db->select("locationreview.*,locations.LocationName");
+            $this->db->from("locationreview");
+            $this->db->join("locations","locations.LocationId = locationreview.locationId");
+            $this->db->where("UserId",$userid);
+            $result = $this->db->get()->result();
+            $resp["success"] = "true";
+            $resp["reviews"] = $result;            
+        }else{
+            $resp["success"] = "false";
+        }
+        
+        $data["reviews"] = json_encode($resp);
+        $this->load->view("fetch_reviews",$data);
+    }
+    
 
 }
 

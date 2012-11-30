@@ -1,13 +1,13 @@
 <?php
 //Host of the computer that holds the database. if the same computer as the web-host, leave as localhost.
 //If unsure, use localhost
-define("DATABASE_HOST", "mysql.serversfree.com");
+define("DATABASE_HOST", "group2db.ct7zr20oojcc.us-east-1.rds.amazonaws.com");
 
 //The name of the database within which SE resides
-define("DATABASE", "u618791197_dash");
+define("DATABASE", "dashdb");
 
 //The username required to access the database
-define("DATABASE_USER", "u618791197_dash");
+define("DATABASE_USER", "dash");
 
 //The password required to access the databas
 define("DATABASE_PASSWORD", "group2project");
