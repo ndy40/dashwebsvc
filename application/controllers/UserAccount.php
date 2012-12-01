@@ -128,7 +128,7 @@ class UserAccount extends CI_Controller {
         $this->load->view("fetch_user",$data);
     }
     
-    public function fetch_followers($userid)
+    public function fetch_following($userid)
 	{
         $this->load->database();
         $resp = array();
@@ -151,7 +151,7 @@ class UserAccount extends CI_Controller {
         $this->load->view("fetch_followers",$data);
     }
     
-    public function fetch_following($userid)
+    public function fetch_followers($userid)
 	{
         $this->load->database();
         $resp = array();
